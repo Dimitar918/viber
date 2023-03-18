@@ -2,41 +2,51 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" location = "left">
       <!--  -->
+        
     </v-navigation-drawer>
 
     <v-app-bar color = "main">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-
       <v-toolbar-title>Viber</v-toolbar-title>
     </v-app-bar>
 
-    <v-main class = "d-flex flex-column ">
+    <v-main>
 
-      <div class = "flex-grow-1">
-        <v-card v-for="n in 4" :key="n" outlined tile class = "pa-2 ma-2">
+      <v-card class="overflow-y-auto" max-height="575px">
+        <v-card v-for="n in messages" :key="n" outlined tile class = "pa-2 ma-2">
           <div>
             <p>{{ n }}</p>
             <h3> Message {{ n }}</h3>
           </div>
         </v-card>
-      </div>
+      </v-card>
     
 
-      <div class = "flex-grow: 0">
+      <v-card class = "sticky">
         <v-text-field v-on:keyup.enter = "addMessage" label = "Write a message!" class = "justify-start align-content-end" hide-details="auto">
         </v-text-field>
-      </div>
+      </v-card>
       
     </v-main>
   </v-app>
 </template>
 
+<style scoped>
+  .sticky{
+    z-index: 1;
+    position: fixed;
+    top: 100%;
+    transform: translate(0%, -100%);
+    width:100%;
+  }
+</style>
+
 <script>
   export default {
-    data: () => ({ drawer: null }),
+    data: () => ({ drawer: null, messages: [] }),
     methods: {
         addMessage(val){
-          alert(val.target.value)
+          this.messages.push(val.target.value);
         }
     }
   }

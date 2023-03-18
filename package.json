@@ -9,8 +9,10 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@firebase/firestore": "^3.8.3",
     "@mdi/font": "7.0.96",
     "core-js": "^3.8.3",
+    "firebase": "^9.17.1",
     "roboto-fontface": "*",
     "vue": "^3.2.13",
     "vue-router": "^4.0.0",
