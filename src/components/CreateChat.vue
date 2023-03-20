@@ -1,3 +1,4 @@
+import { sendChatRequest } from '../plugins/firebase';
 <template>
     <div class = "center">
         <div class = "form">
@@ -16,7 +17,7 @@
             <div class = "d-flex align-center">
             <v-text-field 
             v-model="person"
-            label="Add name"
+            label="Add By Id"
             hide-details="auto"
               variant="underlined"
               clearable
@@ -88,9 +89,8 @@
 </style>
 
 <script>
-import {doc, setDoc } from '@firebase/firestore';
-import {db} from "@/plugins/firebase.js";
-import { getUser } from '@/plugins/storage';
+    import { getUser } from '@/plugins/storage.js';
+    import { sendChatRequest, createChat } from '@/plugins/firebase.js';
 
     export default {
         data() {
@@ -110,7 +110,13 @@ import { getUser } from '@/plugins/storage';
             },
 
             async CreateChat(){
-                
+                const chatId = await createChat(this.name);
+
+                await sendChatRequest(getUser().createdUser.uid, chatId, this.name,  "admin");
+
+                for(let person of this.people) {
+                    await sendChatRequest(person, chatId , this.name, "member");
+                }
             }
         }
     }

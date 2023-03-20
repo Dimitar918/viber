@@ -1,9 +1,12 @@
 <template>
     <v-toolbar dark color="#162130" style="height:7.5vh;">
         <v-toolbar-items v-if="isLogged">
-        <router-link to = "/" color="white" class = "el">Chats</router-link>
+        <div class = "el">
+          <p>{{this.name.username}}</p>
+          <p style = "font-size: 12px">{{this.uid}}</p>
+        </div>
+        <router-link to = "/chats" color="white" class = "el">Chats</router-link>
         <router-link to = "/create" flat color="white" class = "el">Create Chat</router-link>
-        <router-link to = "/register" flat color="white" class = "el">Requests</router-link>
         <router-link to = "/logout" flat color="white" class = "el logout">Log out</router-link>
       </v-toolbar-items>
 
@@ -35,11 +38,17 @@
     export default {
       data() {
         return {
-          isLogged: false
+          isLogged: false,
+          name: null,
+          uid: null
         }
       },
       created() {
-        if(getUser() !== null){
+        const user = getUser();
+
+        if(user !== null){
+          this.name = user.username;
+          this.uid = user.createdUser.uid;
           this.isLogged = true;
         }
         else{

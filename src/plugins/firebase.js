@@ -1,11 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, addDoc, setDoc, getDoc, collection, setDoc} from "firebase/firestore";
-import { getUser } from "./storage.js";
+import { getDatabase, ref, set, child, get, update } from "firebase/database";
+import {v4 as uuid} from 'uuid';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDvUh93dOLAlZ-bSPkuHfGHMAJdNlfVUwo",
   authDomain: "viber-app-b3f35.firebaseapp.com",
+  databaseURL: "https://viber-app-b3f35-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "viber-app-b3f35",
   storageBucket: "viber-app-b3f35.appspot.com",
   messagingSenderId: "243889158310",
@@ -16,57 +18,53 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+const db = getDatabase(app);
 
-export const db = getFirestore(app);
+export async function createUser(user, name) {
+  await set(ref(db, 'users/' + user.uid), {
+    username: name
+  });
+}
 
-export async function getUserName(user){
-  try{
-    const usersMainDoc= doc(db, "users", user.uid);
-    const users = await getDoc(usersMainDoc);
-
-    return users.data().name;
-  }
-  catch(err){
-    alert(err.message);
-  }
+export async function getName(user) {
+  const dbRef = ref(db);
+  const res =  await get(child(dbRef, `users/` + user.uid));
+  return await res.val();
 
 }
 
+export async function sendChatRequest(uid, chatId, chatName, role) {
+  const dbRef = ref(db);
 
-export async function setUser(uid, id){
-  try{
-    const userDoc = doc(db, "users", uid);
-    const user = await getDoc(userDoc);
-  
-    user.chats.push(id);
-  
-    await setDoc(userDoc, user);
-  }
-  catch(err){
-    alert(err.message);
-  }
-}
+  const updates = {};
+  updates[chatId] = {
+    role: role,
+    name: chatName,
+  };
 
-export async function addUser(user, name){
-    try{
-      const userDoc = doc(db, "users", user.uid);
-      await setDoc(userDoc, {
-        name: name,
-        chats: [],
-      })
-    }
-    catch(err){
-      alert(err.message);
-    }
-}
-
-export async function createChat(documentData){
-  const coll = collection(db, "/chats");
-  const createdDocument = await addDoc(coll, documentData);
-
-  return createdDocument.id;
+  await update(child(dbRef, `users/${uid}/chats/`), updates);
 
 }
+
+export async function createChat(name) {
+  const chatId = uuid();
+  await set(ref(db, 'groups/' + chatId), {
+    groupName: name,
+    messages: {}
+  });
+
+  return chatId;
+}
+
+export async function getChats(user) {
+   const chats = await get(ref(db, 'users/' + user.createdUser.uid + "/chats/"));
+   const data = await chats.val();
+   return data;
+}
+
+
+
+
 
 
 

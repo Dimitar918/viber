@@ -57,7 +57,7 @@
 <script>
 
 import {createUserWithEmailAndPassword} from "firebase/auth";
-import {auth, addUser} from "@/plugins/firebase.js";
+import {auth, createUser} from "@/plugins/firebase.js";
 import {setUser} from "@/plugins/storage.js"; 
 import router from "@/router";
 
@@ -84,7 +84,7 @@ export default {
                 const createdUser =  res.user; 
                 setUser({createdUser, username: user.username});
 
-                await addUser(createdUser, user.username);  
+                await createUser(createdUser, user.username);  
 
                 router.push("/");
 

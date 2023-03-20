@@ -2,7 +2,11 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" location = "left">
       <!--  -->
-        
+      <v-card v-for="n in chats" :key="n" outlined tile class = "pa-2 ma-2">
+        <div>
+          <p>{{ n }}</p>
+        </div>
+      </v-card>
     </v-navigation-drawer>
 
     <v-app-bar color = "main">
@@ -42,9 +46,22 @@
 </style>
 
 <script>
+  import { getChats } from '@/plugins/firebase.js';
+  import { getUser } from '../plugins/storage.js';
+
   export default {
-    data: () => ({ drawer: null, messages: [] }),
+    data: () => ({ drawer: null, messages: [], chats: [] }),
+    created() {
+      this.generateChats();
+    },
     methods: {
+        async generateChats(){
+          const res = await getChats(getUser());
+          const keys = Array.from(Object.keys(res));
+          keys.forEach(key => {
+            this.chats.push(res[key].name);
+          })
+        },
         addMessage(val){
           this.messages.push(val.target.value);
         }

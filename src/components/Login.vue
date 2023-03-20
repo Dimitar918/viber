@@ -48,7 +48,7 @@
     <script>
     
     import {signInWithEmailAndPassword } from "firebase/auth";
-    import {auth, getUserName} from "@/plugins/firebase.js";
+    import {auth, getName} from "@/plugins/firebase.js";
     import {setUser} from "@/plugins/storage.js"; 
     import router from "@/router";
     
@@ -73,7 +73,7 @@
                     const res = await signInWithEmailAndPassword(auth, user.email, user.password);
     
                     const createdUser =  res.user; 
-                    const username = await getUserName(createdUser);
+                    const username = await getName(createdUser);
 
     
                     setUser({createdUser, username: username});
@@ -82,7 +82,7 @@
 
     
                 }catch(err){
-                    alert(err.message);
+                    console.log(err.message);
                 }
             }
         }
